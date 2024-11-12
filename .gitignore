@@ -3,8 +3,5 @@ build/
 
 # Ignore all files in libs directory
 libs/
-libs/opencv/
-libs/pytorch/
-libs/pytorch/lib/libtorch_cpu.dylib
-libs/boost/
+
 
