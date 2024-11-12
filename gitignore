@@ -3,3 +3,5 @@ build/
 
 # Ignore all files in libs directory
 libs/
+libs/opencv/
+
