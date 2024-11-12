@@ -4,4 +4,6 @@ build/
 # Ignore all files in libs directory
 libs/
 libs/opencv/
+libs/pytorch/
+libs/boost/
 
