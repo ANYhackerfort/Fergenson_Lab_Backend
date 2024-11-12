@@ -2,7 +2,10 @@
 #define IMAGEPROCESSOR_H
 
 #include <string>
+#include <tesseract/baseapi.h>
 #include <opencv2/opencv.hpp>
+#include <leptonica/allheaders.h>
+
 
 
 class ImageProcessor {
@@ -18,6 +21,8 @@ public:
 
     // Method to apply edge detection
     void detectEdges(double lowerThreshold = 50.0, double upperThreshold = 150.0);
+
+    void detectMinMax(double lowerThreshold = 50.0, double upperThreshold = 150.0);
 
     // Method to display images
     void displayImages() const;

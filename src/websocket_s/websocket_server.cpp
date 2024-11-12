@@ -17,7 +17,7 @@ void do_session(tcp::socket socket) {
         ws.accept();  // Accept the WebSocket handshake
 
         // Path to the image (can be hard-coded or dynamically set)
-        std::string imagePath = "/Users/matthewzhang/Downloads/file.png";
+        std::string imagePath = "/Users/miladhaghighi/Downloads/Screenshot_2024-11-06_at_10.23.53_PM.png";
 
         // Initialize ImageProcessor with the image path
         ImageProcessor processor(imagePath);
@@ -31,12 +31,13 @@ void do_session(tcp::socket socket) {
         // Convert to grayscale and detect edges
         processor.convertToGrayscale();
         processor.detectEdges();
+        processor.detectMinMax();
 
         // Get the processed image (edges) as a cv::Mat
         cv::Mat processedImage = processor.getEdges();
 
         // Save the processed image to a file
-        cv::imwrite("/Users/matthewzhang/Downloads/processed_edges.png", processedImage);
+        cv::imwrite("/Users/miladhaghighi/Downloads/processed_edges.png", processedImage);
 
         // Send a simple confirmation message to the frontend
         ws.write(asio::buffer("Image processing and edge detection completed"));
