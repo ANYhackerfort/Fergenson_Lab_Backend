@@ -1,3 +1,0 @@
-/Users/matthewzhang/websocket-Fergenson/build/CMakeFiles/WebSocketWithOpenCV.dir
-/Users/matthewzhang/websocket-Fergenson/build/CMakeFiles/edit_cache.dir
-/Users/matthewzhang/websocket-Fergenson/build/CMakeFiles/rebuild_cache.dir
