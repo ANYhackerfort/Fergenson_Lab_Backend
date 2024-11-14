@@ -2,11 +2,7 @@
 #define IMAGEPROCESSOR_H
 
 #include <string>
-#include <tesseract/baseapi.h>
 #include <opencv2/opencv.hpp>
-#include <leptonica/allheaders.h>
-
-
 
 class ImageProcessor {
 public:
@@ -22,16 +18,22 @@ public:
     // Method to apply edge detection
     void detectEdges(double lowerThreshold = 50.0, double upperThreshold = 150.0);
 
-    void detectMinMax(double lowerThreshold = 50.0, double upperThreshold = 150.0);
+    // Method to apply Gaussian blur for noise reduction
+    void removeNoise(); 
+    void preprocessForOCR();
 
-    // Method to display images
-    void displayImages() const;
-    cv::Mat getEdges() const { return edges; }
+    // Getter for the Gaussian-blurred image
+    cv::Mat getGaussianImage() const { return gaussianImage; }
+    cv::Mat getGrayScaleImage() const {return grayImage; }
+    cv::Mat getPreproccessed_ocr() const {return preproccessed_ocr; }
+
 
 private:
     cv::Mat originalImage; // Original loaded image
     cv::Mat grayImage;     // Grayscale version of the image
     cv::Mat edges;         // Edge-detected image
+    cv::Mat gaussianImage; // Gaussian-blurred image (noise-reduced)
+    cv::Mat preproccessed_ocr; 
     std::string imagePath; // Path to the image file
 };
 
