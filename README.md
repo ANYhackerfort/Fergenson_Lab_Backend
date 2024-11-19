@@ -46,7 +46,39 @@ Alternatively, build and run it in one step with
 nix run
 ```
 
-### Janky way
+## Hacking
+
+To hack on the code, it is not convenient to re-run `nix build` upon every code
+change. A [devenv](https://devenv.sh/) development shell is provided so you
+can directly execute `cmake .` and take advantage of CMake's caching features
+and tooling.
+
+Follow the instructions to install `nix` as detailed above, then run
+
+```bash
+nix develop
+```
+
+You will enter a `bash` shell where you can execute `cmake`. All build
+dependencies (such as boost, openCV, etc) are provided in this shell.
+
+You can run `cmake .` followed by `make` to compile the project.
+
+Alternatively, if you want to retain your current shell environment, you can
+install [direnv](https://direnv.net/), then run
+
+```bash
+direnv allow
+```
+
+Now, your shell will automatically be hooked into the development environment
+as soon as you enter the project root.
+
+The development shell also provides the `clang` and `clangd` LSP binaries for
+convenience.
+
+
+## Janky method (not recommended)
 
 Before setting up this project, ensure that the following libraries and tools
 are installed on your system:
@@ -83,7 +115,7 @@ You can specify the location to `libtorch` with the CMake flag
 ```
 
 4. **CMake**
-cmake --build .
+cmake .
 
 5. **Make**
 make
