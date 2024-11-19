@@ -1,7 +1,7 @@
+/.vs
+
 # Ignore all files in build directory
-build/
+/build
 
 # Ignore all files in libs directory
-libs/
-
-
+/libs

@@ -1,10 +1,16 @@
+#ifdef _WIN32
+#define _WIN32_WINNT 0x0A00
+#endif 
+
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <string>
 #include <sstream>
+#include <cstdlib>
 #include "process_image.h"
-#include <torch/torch.h>
+#include "liboai.h"
 
 // Namespace declarations
 namespace asio = boost::asio;
@@ -27,9 +33,8 @@ void do_session(tcp::socket socket) {
     try {
         websocket::stream<tcp::socket> ws(std::move(socket));
         ws.accept();  // Accept the WebSocket handshake
-
-        // Path to the image (can be hard-coded or dynamically set)
-        std::string imagePath = "/Users/matthewzhang/Desktop/tt.png";
+        //Path to the image (can be hard-coded or dynamically set)
+        std::string imagePath = "/Users/matthewzhang/Downloads/file.png";
 
         // Initialize ImageProcessor with the image path
         ImageProcessor processor(imagePath);
@@ -61,7 +66,54 @@ void do_session(tcp::socket socket) {
         std::cout << "Processed image saved to file, and confirmation message sent to the client." << std::endl;
 
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cout << "Error: " << e.what() << std::endl;
+    }
+}
+
+void reply(tcp::socket socket)
+{
+    try {
+        websocket::stream<tcp::socket> ws(std::move(socket));
+        ws.accept();  // Accept the WebSocket handshake
+
+        liboai::OpenAI open_ai;
+        liboai::Conversation chat_box;
+
+        chat_box.SetSystemData("You are a professional physics chatbox");
+
+        beast::multi_buffer buffer;
+        if (open_ai.auth.SetKeyEnv("OPENAI"))
+        {
+            std::cout << "Did this even work" << '\n';
+            try 
+            {
+                while (true) 
+                {
+                    ws.read(buffer);  // Blocking read
+                    std::string chat_message = beast::buffers_to_string(buffer.data());
+                    std::cout << "Received message: " << chat_message << '\n';
+
+                    chat_box.AddUserData(chat_message);
+
+                    liboai::Response response = open_ai.ChatCompletion->create("gpt-4o-mini", chat_box);
+
+                    chat_box.Update(response);
+
+                    // Send a confirmation message
+                    ws.write(asio::buffer(chat_box.GetLastResponse()));
+                    std::cout << "Confirmation sent to client\n";
+
+                    buffer.consume(buffer.size());  // Clear the buffer for the next message
+                }
+            }
+            catch (std::exception& e)
+            {
+                std::cout << e.what() << '\n';
+            }
+        }
+    }
+    catch(const std::exception& e){
+        std::cout << e.what() << '\n';
     }
 }
 
@@ -72,12 +124,13 @@ int main() {
 
         std::cout << "WebSocket server listening on port 8080..." << std::endl;
 
-        for (;;) {
+        while (true) {
             tcp::socket socket(ioc);
             acceptor.accept(socket);  // Wait for a client to connect
-            std::thread(&do_session, std::move(socket)).detach();
+
+            std::thread(&reply, std::move(socket)).detach();
         }
     } catch (const std::exception& e) {
-        std::cerr << "Server Error: " << e.what() << std::endl;
+        std::cout << "Server Error: " << e.what() << std::endl;
     }
 }
