@@ -1,9 +1,10 @@
 # WebSocketWithOpenCV Project
 
-This project is a WebSocket server that uses Boost, OpenCV, and C++ to perform image processing. The server processes images, detects edges, and sends a confirmation message to the client upon completion. The project includes support for displaying processed images on the backend and can be configured to save output images instead.
-
-## Prerequisites
-
+This project is a WebSocket server that uses Boost, OpenCV, and C++ to perform
+image processing. The server processes images, detects edges, and sends a
+confirmation message to the client upon completion. The project includes
+support for displaying processed images on the backend and can be configured to
+save output images instead.
 
 ## Installation
 
