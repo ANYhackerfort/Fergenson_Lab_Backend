@@ -1,11 +1,3 @@
-name: Test build
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
 build_nix_targets:
   name: Build Nix targets
   runs-on: ubuntu-latest
