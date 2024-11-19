@@ -79,7 +79,7 @@ The development shell also provides the `clang` and `clangd` LSP binaries for
 convenience.
 
 
-## Janky method (not recommended)
+## Janky method (not recommended or supported)
 
 Before setting up this project, ensure that the following libraries and tools
 are installed on your system:
