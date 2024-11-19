@@ -10,9 +10,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/websocket_f)
 include_directories(${PROJECT_SOURCE_DIR}/include/openCV_f)
 
-# Set Torch_DIR to the directory containing TorchConfig.cmake
-set(Torch_DIR "/Users/matthewzhang/websocket-Fergenson/libs/pytorch/share/cmake/Torch")
-
 # Find Boost and OpenCV
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
