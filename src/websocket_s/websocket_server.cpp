@@ -18,16 +18,16 @@ using tcp = boost::asio::ip::tcp;
 namespace websocket = boost::beast::websocket;
 
 // Function to test PyTorch integration
-void testPyTorch() {
-    // Create a 3x3 random tensor
-    torch::Tensor tensor = torch::rand({3, 3});
-    std::cout << "Testing PyTorch Installation:" << std::endl;
-    std::cout << "Random Tensor:\n" << tensor << std::endl;
-
-    // Perform a simple operation
-    tensor = tensor * 2;
-    std::cout << "Tensor after multiplication:\n" << tensor << std::endl;
-}
+//void testPyTorch() {
+//    // Create a 3x3 random tensor
+//    torch::Tensor tensor = torch::rand({3, 3});
+//    std::cout << "Testing PyTorch Installation:" << std::endl;
+//    std::cout << "Random Tensor:\n" << tensor << std::endl;
+//
+//    // Perform a simple operation
+//    tensor = tensor * 2;
+//    std::cout << "Tensor after multiplication:\n" << tensor << std::endl;
+//}
 
 void do_session(tcp::socket socket) { 
     try {
@@ -58,7 +58,7 @@ void do_session(tcp::socket socket) {
         }
 
         // Test PyTorch functionality
-        testPyTorch();
+        //testPyTorch();
 
         // Send a confirmation message to the frontend
         ws.write(asio::buffer("Image processing and edge detection completed"));
@@ -81,7 +81,7 @@ void reply(tcp::socket socket)
 
         chat_box.SetSystemData("You are a professional physics chatbox");
 
-        beast::multi_buffer buffer;
+        boost::beast::multi_buffer buffer;
         if (open_ai.auth.SetKeyEnv("OPENAI"))
         {
             std::cout << "Did this even work" << '\n';
@@ -90,7 +90,7 @@ void reply(tcp::socket socket)
                 while (true) 
                 {
                     ws.read(buffer);  // Blocking read
-                    std::string chat_message = beast::buffers_to_string(buffer.data());
+                    std::string chat_message = boost::beast::buffers_to_string(buffer.data());
                     std::cout << "Received message: " << chat_message << '\n';
 
                     chat_box.AddUserData(chat_message);
