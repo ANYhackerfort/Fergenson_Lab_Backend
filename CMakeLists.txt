@@ -10,6 +10,10 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/websocket_f)
 include_directories(${PROJECT_SOURCE_DIR}/include/openCV_f)
 
+# Find dependencies for Open_AI Library
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(curl REQUIRED)
+
 # Find Boost using imported targets
 find_package(Boost REQUIRED COMPONENTS system)
 
@@ -25,5 +29,14 @@ set(SOURCES
 # Add executable target
 add_executable(WebSocketWithOpenCV ${SOURCES})
 
+# Find the Open_Ai Library
+if(DEFINED OPENAI_DIR)
+    find_library(OPENAI_LIB oai PATHS ${OPENAI_DIR}/build)
+    include_directories(${OPENAI_DIR}/include)
+    target_link_libraries(WebSocketWithOpenCV PRIVATE CURL::libcurl)
+    target_link_libraries(WebSocketWithOpenCV PRIVATE nlohmann_json::nlohmann_json)
+    target_link_libraries(WebSocketWithOpenCV PRIVATE ${OPENAI_LIB})
+endif()
+
 # Link libraries (Boost and OpenCV)
-target_link_libraries(WebSocketWithOpenCV Boost::system ${OpenCV_LIBS})
+target_link_libraries(WebSocketWithOpenCV PRIVATE Boost::system ${OpenCV_LIBS})
