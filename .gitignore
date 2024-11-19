@@ -3,3 +3,6 @@ build/
 
 # Ignore all files in libs directory
 libs/
+
+.DS_STORE
+result
