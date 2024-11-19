@@ -19,11 +19,6 @@ stdenv.mkDerivation (finalAttrs: {
     libtorch-bin
   ];
 
-  cmakeFlags = [
-    # provide path to libtorch
-    "-DCMAKE_PREFIX_PATH=${libtorch-bin}"
-  ];
-
   buildPhase = ''
     cmake --build .
     make
