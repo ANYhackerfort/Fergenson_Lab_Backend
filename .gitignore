@@ -1,7 +1,15 @@
-# Ignore all files in build directory
+# macOS brain damage
+.DS_STORE
+
+# nix files
+result
+.devenv
+.direnv
+
+# build artifacts
 build/
-
-# Ignore all files in libs directory
-libs/
-
-
+Makefile
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+WebSocketWithOpenCV
