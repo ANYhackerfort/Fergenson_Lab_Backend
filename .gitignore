@@ -16,3 +16,5 @@ WebSocketWithOpenCV
 libs/
 ./libs/
 
+#vscode
+.vscode
