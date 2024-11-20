@@ -12,24 +12,33 @@ include_directories(${PROJECT_SOURCE_DIR}/include/openCV_f)
 
 # Find Directories, accounts for if you have an environment where cmake can find it automatically. 
 
-if (NOT Boost_DIR)
-    set(Boost_DIR "${CMAKE_SOURCE_DIR}/libs/boost" CACHE PATH "Path to Boost library")
+if (NOT Torch_DIR)
+    set(Torch_DIR "${CMAKE_SOURCE_DIR}/libs/libtorch/share/cmake/Torch" CACHE PATH "Path to Torch library")
+    message(STATUS "Torch_DIR not provided. Using default: ${Torch_DIR}")
+else()
+    message(STATUS "Using user-provided Torch_DIR: ${Torch_DIR}")
 endif()
 
 if (NOT OpenCV_DIR)
-    set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/libs/opencv" CACHE PATH "Path to OpenCVConfig.cmake")
+    set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/libs/opencv/lib/cmake/opencv4" CACHE PATH "Path to OpenCV library")
+    message(STATUS "OpenCV_DIR not provided. Using default: ${OpenCV_DIR}")
+else()
+    message(STATUS "Using user-provided OpenCV_DIR: ${OpenCV_DIR}")
 endif()
 
-set(Torch_DIR "/Users/matthewzhang/websocket-Fergenson/libs/pytorch/libtorch/share/cmake/Torch")
+if (NOT Boost_DIR)
+    set(Boost_DIR "${CMAKE_SOURCE_DIR}/libs/boost" CACHE PATH "Path to Boost library")
+    message(STATUS "Boost_DIR not provided. Using default: ${Boost_DIR}")
+else()
+    message(STATUS "Using user-provided Boost_DIR: ${Boost_DIR}")
+endif()
 
-# Check Torch_DIR
-
-# Check Boost_DIR
+if (NOT EXISTS "${Torch_DIR}")
+    message(FATAL_ERROR "Torch directory structure not set up right or you didn't clone all dependencies. Expected: ${Torch_DIR}")
+endif()
 if (NOT EXISTS "${Boost_DIR}")
     message(FATAL_ERROR "Boost directory structure not set up right or you didn't clone all dependencies. Expected: ${Boost_DIR}")
 endif()
-
-# Check OpenCV_DIR
 if (NOT EXISTS "${OpenCV_DIR}/OpenCVConfig.cmake")
     message(FATAL_ERROR "OpenCV directory structure not set up right or you didn't clone all dependencies. Expected: ${OpenCV_DIR}/OpenCVConfig.cmake")
 endif()
