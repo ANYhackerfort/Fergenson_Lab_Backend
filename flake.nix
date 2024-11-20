@@ -72,7 +72,7 @@
                 '';
               };
 
-              git-hooks = {
+              git-hooks.hooks = {
                 clang-format.enable = true;
                 clang-tidy.enable = true;
                 shellcheck.enable = true;
