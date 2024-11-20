@@ -79,7 +79,7 @@ The development shell also provides the `clang` and `clangd` LSP binaries for
 convenience.
 
 
-## Quick-and-dirty solution (Will Work without any downloads to package managers)
+## Solution without package managers, only Cmakelist
 
 Before setting up this project, ensure that the following libraries and tools
 are installed on your system:
@@ -88,12 +88,13 @@ are installed on your system:
 > These are only required when compiling manually. When building with Nix, all
 > dependencies are provided automatically.
 
-
 - **Boost** (including Boost.Asio and Boost.Beast)
 - **OpenCV** (version 4.0 or higher)
 - **libtorch** (v2.5.0 or higher)
 
-./install_dependencies.sh is a quick solution to install all of them in your libs folder in this project repo!
+Quick solution to install all of them in your libs folder in this project repo: 
+(1) chmod +x install_dependencies.sh
+(2) ./install_dependencies.sh
 
 - **A C++ Compiler** (supporting C++17 or higher)
 - **CMake** (version 3.10 or higher)
@@ -114,11 +115,12 @@ for that!
 
 *If you want to install all separate from any other projects, just in this project folder*
 Simply run install_dependencies.sh by doing:
-```bash
-  ./install_dependencies.sh
-```
+
+(1) chmod +x install_dependencies.sh
+(2) ./install_dependencies.sh
 
 Debugging statements are there to help you. 
 
 3. **Build and server**
-Just do ./build.sh
+(1) chmod +x build.sh
+(2) do ./build.sh
