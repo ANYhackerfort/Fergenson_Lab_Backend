@@ -1,12 +1,12 @@
 {
-  stdenv,
+  llvmPackages_19,
   cmake,
   libtorch-bin,
   boost,
   opencv,
   lib,
 }:
-stdenv.mkDerivation (finalAttrs: {
+llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
   pname = "lab-backend";
   version = "0.1.0";
 

@@ -13,3 +13,5 @@ CMakeFiles
 CMakeCache.txt
 cmake_install.cmake
 WebSocketWithOpenCV
+compile_commands.json
+.cache

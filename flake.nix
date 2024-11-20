@@ -38,6 +38,7 @@
               inherit (pkgs) libtorch-bin boost opencv;
             in
             {
+              stdenv = pkgs.llvmPackages_19.stdenv;
               packages =
                 [
                   config.packages.default
@@ -49,9 +50,9 @@
                   cmake
                 ]);
 
-              enterShell = ''
-                export CMAKE_PREFIX_PATH=${libtorch-bin}:${boost}:${opencv}:$CMAKE_PREFIX_PATH
-              '';
+              # enterShell = ''
+              #   export CMAKE_PREFIX_PATH=${libtorch-bin}:${boost}:${opencv}:$CMAKE_PREFIX_PATH
+              # '';
 
               languages.cplusplus.enable = true;
             };
