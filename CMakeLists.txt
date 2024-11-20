@@ -44,11 +44,17 @@ if (NOT EXISTS "${OpenCV_DIR}/OpenCVConfig.cmake")
 endif()
 
 # Find Packages
+
+# Find dependencies for Open_AI Library
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(curl REQUIRED)
+
+# Find Boost using imported targets
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
 
-# Find Torch
-find_package(Torch REQUIRED)
+# Find and include OpenCV
+find_package(OpenCV REQUIRED)
 
 # Add source files
 set(SOURCES
@@ -59,18 +65,29 @@ set(SOURCES
 # Add executable target
 add_executable(WebSocketWithOpenCV ${SOURCES})
 
-# Link libraries (Boost, OpenCV, and Torch)
-target_link_libraries(WebSocketWithOpenCV
-    Boost::system
-    ${OpenCV_LIBS}
-    ${TORCH_LIBRARIES}
-)
+# Manually set the OpenAI directory
+set(OPENAI_DIR "/Users/matthewzhang/websocket-Fergenson/libs/liboai/liboai")
 
-# Add Torch include directories
-target_include_directories(WebSocketWithOpenCV PRIVATE ${TORCH_INCLUDE_DIRS})
+# Check if the OpenAI directory is defined
+if (DEFINED OPENAI_DIR)
+    # Find the OpenAI static library (liboai.a or liboai.so/dylib)
+    find_library(OPENAI_LIB oai PATHS ${OPENAI_DIR}/build)
+    
+    # Include the OpenAI headers
+    include_directories(${OPENAI_DIR}/include)
 
-# Set C++ flags for Torch
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+    # Link required libraries
+    target_link_libraries(WebSocketWithOpenCV PRIVATE CURL::libcurl)
+    target_link_libraries(WebSocketWithOpenCV PRIVATE nlohmann_json::nlohmann_json)
 
-# Ensure C++17 is used for compatibility
-set_property(TARGET WebSocketWithOpenCV PROPERTY CXX_STANDARD 17)
+    # Link the OpenAI library if found
+    if (OPENAI_LIB)
+        target_link_libraries(WebSocketWithOpenCV PRIVATE ${OPENAI_LIB})
+        message(STATUS "Successfully linked OpenAI library: ${OPENAI_LIB}")
+    else()
+        message(WARNING "OpenAI library not found at ${OPENAI_DIR}/build. Please ensure liboai was built correctly.")
+    endif()
+endif()
+
+# Link libraries (Boost and OpenCV)
+target_link_libraries(WebSocketWithOpenCV PRIVATE Boost::system ${OpenCV_LIBS})

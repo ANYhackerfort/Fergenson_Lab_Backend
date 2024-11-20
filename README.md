@@ -98,6 +98,8 @@ Quick solution to install all of them in your libs folder in this project repo:
 
 - **A C++ Compiler** (supporting C++17 or higher)
 - **CMake** (version 3.10 or higher)
+- **nlohmann-json** (version 3.11.3 or higher)
+- **curl 7.78.0** (version 3.10 or higher)
 
 Using this approach, you will have to manually provide the dependencies above,
 placing them somewhere that `CMake` can find them.
