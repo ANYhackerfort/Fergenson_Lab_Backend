@@ -13,3 +13,6 @@ CMakeFiles
 CMakeCache.txt
 cmake_install.cmake
 WebSocketWithOpenCV
+libs/
+./libs/
+

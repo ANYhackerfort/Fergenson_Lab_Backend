@@ -9,8 +9,39 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/websocket_f)
 include_directories(${PROJECT_SOURCE_DIR}/include/openCV_f)
+include_directories(${PROJECT_SOURCE_DIR}/include/PyTorch_f)
 
-# Find Boost and OpenCV
+
+# Find Directories, accounts for if you have an environment where cmake can find it automatically. 
+if (NOT Torch_DIR)
+    set(Torch_DIR "${CMAKE_SOURCE_DIR}/libs/pytorch/share/cmake/Torch" CACHE PATH "Path to TorchConfig.cmake")
+endif()
+
+if (NOT Boost_DIR)
+    set(Boost_DIR "${CMAKE_SOURCE_DIR}/libs/boost" CACHE PATH "Path to Boost library")
+endif()
+
+if (NOT OpenCV_DIR)
+    set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/libs/opencv" CACHE PATH "Path to OpenCVConfig.cmake")
+endif()
+
+
+# Check Torch_DIR
+if (NOT EXISTS "${Torch_DIR}/TorchConfig.cmake")
+    message(FATAL_ERROR "Torch directory structure not set up right or you didn't clone all dependencies. Expected: ${Torch_DIR}/TorchConfig.cmake")
+endif()
+
+# Check Boost_DIR
+if (NOT EXISTS "${Boost_DIR}")
+    message(FATAL_ERROR "Boost directory structure not set up right or you didn't clone all dependencies. Expected: ${Boost_DIR}")
+endif()
+
+# Check OpenCV_DIR
+if (NOT EXISTS "${OpenCV_DIR}/OpenCVConfig.cmake")
+    message(FATAL_ERROR "OpenCV directory structure not set up right or you didn't clone all dependencies. Expected: ${OpenCV_DIR}/OpenCVConfig.cmake")
+endif()
+
+# Find Packages
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
 
