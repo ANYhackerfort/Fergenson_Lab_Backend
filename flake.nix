@@ -38,6 +38,9 @@
               inherit (pkgs) libtorch-bin boost opencv;
             in
             {
+              enterShell = ''
+                export CWD=$(pwd)
+              '';
               stdenv = pkgs.llvmPackages_19.stdenv;
               packages =
                 [
@@ -51,6 +54,23 @@
                 ]);
 
               languages.cplusplus.enable = true;
+
+              scripts = {
+                format.exec = ''
+                  find $CWD/{src,include} -name '*.cpp' -o -name '*.h' | xargs clang-format -i
+                '';
+                lint.exec = ''
+                  find $CWD/{src,include} -name '*.cpp' -o -name '*.h' \
+                    | xargs -I{} clang-tidy -p=./compile_commands.json -checks='*' {}
+                '';
+                build.exec = ''
+                  cmake .
+                  make
+                '';
+                setup-clangd.exec = ''
+                  cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+                '';
+              };
             };
         };
     };
