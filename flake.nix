@@ -71,6 +71,12 @@
                   cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
                 '';
               };
+
+              git-hooks = {
+                clang-format.enable = true;
+                clang-tidy.enable = true;
+                shellcheck.enable = true;
+              };
             };
         };
     };
