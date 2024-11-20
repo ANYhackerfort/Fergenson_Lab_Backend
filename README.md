@@ -78,6 +78,10 @@ as soon as you enter the project root.
 The development shell also provides the `clang` and `clangd` LSP binaries for
 convenience.
 
+In order for `clangd` to find the dependencies, you need to first run `cmake .`
+in the project root. This will compile the project and create a
+`compile_commands.json` that helps `clangd` locate the dependencies.
+
 
 ## Janky method (not recommended or supported)
 
