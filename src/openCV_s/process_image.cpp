@@ -42,3 +42,6 @@ void ImageProcessor::preprocessForOCR() {
     // Perform dilation to make text bolder (optional for OCR)
     cv::dilate(adaptiveThresholdImage, preproccessed_ocr, cv::Mat(), cv::Point(-1, -1), 1);
 }
+
+
+

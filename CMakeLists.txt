@@ -10,43 +10,38 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/websocket_f)
 include_directories(${PROJECT_SOURCE_DIR}/include/openCV_f)
 
-# Manually include directories for Tesseract and Leptonica headers
-include_directories(${PROJECT_SOURCE_DIR}/libs/tesseract)
-include_directories(${PROJECT_SOURCE_DIR}/libs/leptonica)
+# Set Torch_DIR to the directory containing TorchConfig.cmake
+set(Torch_DIR "/Users/matthewzhang/websocket-Fergenson/libs/pytorch/share/cmake/Torch")
 
-# Find Boost
+# Find Boost and OpenCV
 find_package(Boost REQUIRED COMPONENTS system)
-if(Boost_FOUND)
-    message(STATUS "Boost found: ${Boost_VERSION}")
-else()
-    message(FATAL_ERROR "Boost not found.")
-endif()
-
-# Find OpenCV
 find_package(OpenCV REQUIRED)
-if(OpenCV_FOUND)
-    message(STATUS "OpenCV found: ${OpenCV_VERSION}")
-else()
-    message(FATAL_ERROR "OpenCV not found.")
-endif()
 
-# Find Tesseract and Leptonica Libraries
-set(Tesseract_LIBRARIES "${PROJECT_SOURCE_DIR}/libs/tesseract/tesseract/lib/libtesseract.dylib")  # Update path if needed
-set(Leptonica_LIBRARIES "${PROJECT_SOURCE_DIR}/libs/leptonica/leptonica/lib/libleptonica.dylib")  # Update path if needed
+# Find Torch
+find_package(Torch REQUIRED)
 
 # Add source files
 set(SOURCES
     src/websocket_s/websocket_server.cpp
     src/openCV_s/process_image.cpp
+    src/openCV_s/angleDetection.cpp
 )
 
 # Add executable target
 add_executable(WebSocketWithOpenCV ${SOURCES})
 
-# Link libraries (Boost, OpenCV, Tesseract, and Leptonica)
-target_link_libraries(WebSocketWithOpenCV 
-    Boost::system 
-    ${OpenCV_LIBS} 
-    ${Tesseract_LIBRARIES} 
-    ${Leptonica_LIBRARIES}
+# Link libraries (Boost, OpenCV, and Torch)
+target_link_libraries(WebSocketWithOpenCV
+    Boost::system
+    ${OpenCV_LIBS}
+    ${TORCH_LIBRARIES}
 )
+
+# Add Torch include directories
+target_include_directories(WebSocketWithOpenCV PRIVATE ${TORCH_INCLUDE_DIRS})
+
+# Set C++ flags for Torch
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
+# Ensure C++17 is used for compatibility
+set_property(TARGET WebSocketWithOpenCV PROPERTY CXX_STANDARD 17)
