@@ -50,10 +50,6 @@
                   cmake
                 ]);
 
-              # enterShell = ''
-              #   export CMAKE_PREFIX_PATH=${libtorch-bin}:${boost}:${opencv}:$CMAKE_PREFIX_PATH
-              # '';
-
               languages.cplusplus.enable = true;
             };
         };
