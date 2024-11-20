@@ -25,7 +25,7 @@ jobs:
           use-flakehub: false
 
       - name: Test formatting
-        run: nix develop --impure -c (setup-clangd && devenv test)
+        run: nix develop --impure -c -- setup-clangd && devenv test
 
       - name: Build default package
         run: nix build
