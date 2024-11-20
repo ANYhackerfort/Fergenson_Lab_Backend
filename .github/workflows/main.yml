@@ -26,9 +26,8 @@ jobs:
 
       - name: Test formatting
         run: |
-          nix develop --impure
-          setup-clangd
-          devenv test
+          nix develop --impure -c setup-clangd
+          nix develop --impure -c devenv test
 
       - name: Build default package
         run: nix build
