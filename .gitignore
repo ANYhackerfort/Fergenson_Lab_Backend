@@ -16,3 +16,7 @@ WebSocketWithOpenCV
 compile_commands.json
 .cache
 .pre-commit-config.yaml
+libs/
+
+#vscode
+.vscode

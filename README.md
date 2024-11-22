@@ -83,7 +83,7 @@ in the project root. This will compile the project and create a
 `compile_commands.json` that helps `clangd` locate the dependencies.
 
 
-## Janky method (not recommended or supported)
+## Solution without package managers, only Cmakelist
 
 Before setting up this project, ensure that the following libraries and tools
 are installed on your system:
@@ -92,11 +92,18 @@ are installed on your system:
 > These are only required when compiling manually. When building with Nix, all
 > dependencies are provided automatically.
 
-- **CMake** (version 3.10 or higher)
 - **Boost** (including Boost.Asio and Boost.Beast)
 - **OpenCV** (version 4.0 or higher)
-- **A C++ Compiler** (supporting C++17 or higher)
 - **libtorch** (v2.5.0 or higher)
+
+Quick solution to install all of them in your libs folder in this project repo: 
+(1) chmod +x install_dependencies.sh
+(2) ./install_dependencies.sh
+
+- **A C++ Compiler** (supporting C++17 or higher)
+- **CMake** (version 3.10 or higher)
+- **nlohmann-json** (version 3.11.3 or higher)
+- **curl 7.78.0** (version 3.10 or higher)
 
 Using this approach, you will have to manually provide the dependencies above,
 placing them somewhere that `CMake` can find them.
@@ -106,21 +113,20 @@ placing them somewhere that `CMake` can find them.
    git clone <repository-url>
    cd WebSocketWithOpenCV
 
-2. **Make Build Directory**
-mkdir build
-cd build
+2. **Install dependencies**
+*If you already have dependencies on your computer*
+I still recommend you to have a libs folder that includes the cloned version of all the required dependencies(Both headers and the compiled code). 
+It is then set up in the CmakeList to then find it relative to your project directory. If you don't then it still works, I'll made it so cmake accounts 
+for that! 
 
-3. **Change MakeList to update where your files are**
-I recommend you to have a libs folder that includes the cloned version of boost and openCV.
+*If you want to install all separate from any other projects, just in this project folder*
+Simply run install_dependencies.sh by doing:
 
-You can specify the location to `libtorch` with the CMake flag
+(1) chmod +x install_dependencies.sh
+(2) ./install_dependencies.sh
 
-```
-"-DCMAKE_PREFIX_PATH=<LIBTORCH_PATH_HERE>"
-```
+Debugging statements are there to help you. 
 
-4. **CMake**
-cmake .
-
-5. **Make**
-make
+3. **Build and server**
+(1) chmod +x build.sh
+(2) do ./build.sh
