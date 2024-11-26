@@ -50,9 +50,9 @@ nix run
 ## Hacking
 
 To hack on the code, it is not convenient to re-run `nix build` upon every code
-change. A [devenv](https://devenv.sh/) development shell is provided so you
-can directly execute `cmake .` and take advantage of CMake's caching features
-and tooling.
+change. A [devenv](https://devenv.sh/) development shell is provided so you can
+directly execute `meson`, `ninja`, and take advantage of incremental
+compilation.
 
 Follow the instructions to install `nix` as detailed above, then run
 
