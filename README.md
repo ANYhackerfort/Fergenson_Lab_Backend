@@ -116,10 +116,10 @@ Quick solution to install all of them in your libs folder in this project repo:
 - **Ninja**
 - **Meson**
 - **nlohmann-json** (version 3.11.3 or higher)
-- **curl 7.78.0** (version 3.10 or higher)
+- **libcurl 7.78.0** (version 3.10 or higher)
 
 Using this approach, you will have to manually provide the dependencies above,
-placing them somewhere that `CMake` can find them.
+placing them somewhere that `pkg-config` or `CMake` or `Meson` can find them.
 
 1. **Clone the Repository**
    ```bash
@@ -131,14 +131,6 @@ placing them somewhere that `CMake` can find them.
 I still recommend you to have a libs folder that includes the cloned version of all the required dependencies(Both headers and the compiled code). 
 It is then set up in the CmakeList to then find it relative to your project directory. If you don't then it still works, I'll made it so cmake accounts 
 for that! 
-
-*If you want to install all separate from any other projects, just in this project folder*
-Simply run install_dependencies.sh by doing:
-
-(1) chmod +x install_dependencies.sh
-(2) ./install_dependencies.sh
-
-Debugging statements are there to help you. 
 
 3. **Build and server**
 (1) `meson setup build && cd build`
