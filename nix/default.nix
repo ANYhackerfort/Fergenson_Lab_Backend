@@ -21,7 +21,6 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     ninja
     cmake
     pkg-config
-    liboai
   ];
 
   buildInputs = [
@@ -35,11 +34,6 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     mkdir -p $out/bin
     cp WebSocketWithOpenCV $out/bin
   '';
-
-  mesonFlags = [
-    "-Dliboai_include_path=${liboai}/include"
-    "-Dliboai_lib_path=${liboai}/lib"
-  ];
 
   meta = {
     maintainers = [ lib.maintainers.youwen5 ];

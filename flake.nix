@@ -40,7 +40,6 @@
             '';
             stdenv = pkgs.llvmPackages_19.stdenv;
             packages = [
-              config.packages.default
               pkgs.llvmPackages_19.clang-tools
             ] ++ config.packages.default.buildInputs ++ config.packages.default.nativeBuildInputs;
 
@@ -52,24 +51,12 @@
                 find $CWD/{src,include} -name '*.cpp' -o -name '*.h' \
                   | xargs -I{} clang-tidy -p=./compile_commands.json -checks='*' {}
               '';
-              reconfigure.exec = ''
-                meson setup --reconfigure build \
-                -Dliboai_include_path=${config.packages.liboai}/include \
-                -Dliboai_lib_path=${config.packages.liboai}/lib
-              '';
-            };
-
-            processes = {
-              setup-builddir.exec = ''
-                meson setup build \
-                -Dliboai_include_path=${config.packages.liboai}/include \
-                -Dliboai_lib_path=${config.packages.liboai}/lib
-              '';
             };
 
             git-hooks.hooks = {
               clang-format.enable = true;
               shellcheck.enable = true;
+              nixfmt-rfc-style.enable = true;
             };
           };
         };

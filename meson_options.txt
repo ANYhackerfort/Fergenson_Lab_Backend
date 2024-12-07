@@ -1,2 +1,0 @@
-option('liboai_include_path', type: 'string', value: '', description: 'Path to include directory of liboai')
-option('liboai_lib_path', type: 'string', value: '', description: 'Path to library directory of liboai')

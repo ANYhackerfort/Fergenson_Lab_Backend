@@ -10,13 +10,7 @@ endif
 boost_dep = dependency('boost', method : 'auto', required : true)
 torch_dep = dependency('Torch', method : 'auto', required : true)
 
-liboai_dep = dependency('oai', method: 'auto', required: false)
-if not liboai_dep.found()
-liboai_dep = declare_dependency(
-    include_directories: get_option('liboai_include_path'),
-    link_args: ['-L' + get_option('liboai_lib_path'), '-loai']
-)
-endif
+liboai_dep = dependency('oai', method: 'auto', required: true)
 
 libcurl_dep = dependency('libcurl', method: 'auto', required: true)
 nlohmann_dep = dependency('nlohmann_json', method: 'auto', required: true)

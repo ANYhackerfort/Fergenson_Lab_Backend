@@ -18,12 +18,12 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     cmake
-    curl.dev
+    curl
     nlohmann_json
   ];
 
   propagatedBuildInputs = [
-    curl.dev
+    curl
     nlohmann_json
   ];
 
@@ -34,5 +34,20 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
   postInstall = ''
     # copy header to correct location (CMakeLists.txt does not specify properly)
     cp ../include/liboai.h $out/include
+
+    # create pkgconfig for liboai because it doesn't provide one
+    mkdir -p $out/lib/pkgconfig
+    cat > $out/lib/pkgconfig/oai.pc <<EOF
+    prefix=${placeholder "out"}
+    exec_prefix=''${prefix}
+    libdir=''${prefix}/lib
+    includedir=''${prefix}/include
+
+    Name: oai
+    Description: A C++ library for OpenAI API integration
+    Version: ${finalAttrs.version}
+    Cflags: -I''${includedir}
+    Libs: -L''${libdir} -loai
+    EOF
   '';
 })
