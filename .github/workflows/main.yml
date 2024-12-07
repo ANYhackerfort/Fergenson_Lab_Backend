@@ -26,7 +26,7 @@ jobs:
 
       - name: Test formatting
         run: |
-          nix develop --impure --accept-flake-config -c devenv up
+          nix develop --impure --accept-flake-config -c meson setup build
           nix develop --impure --accept-flake-config -c devenv test
 
       - name: Build default package
