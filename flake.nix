@@ -16,9 +16,7 @@
 
       systems = [
         "x86_64-linux"
-        "aarch64-linux"
         "aarch64-darwin"
-        "x86_64-darwin"
       ];
 
       perSystem =
@@ -28,33 +26,39 @@
           ...
         }:
         {
-          packages.default = pkgs.callPackage ./nix { };
+          packages = {
+            default = pkgs.callPackage ./nix { liboai = config.packages.liboai; };
+            liboai = pkgs.callPackage ./nix/liboai.nix { };
+          };
           formatter = pkgs.nixfmt-rfc-style;
 
           # the development environment for this project
           # provides `cmake`, `clang`, `clangd`, and all required dependencies (boost, opencv, libtorch)
-          devenv.shells.default =
-            let
-              inherit (pkgs) libtorch-bin boost opencv;
-            in
-            {
-              packages =
-                [
-                  config.packages.default
-                  libtorch-bin
-                  boost
-                  opencv
-                ]
-                ++ (with pkgs; [
-                  cmake
-                ]);
+          devenv.shells.default = {
+            enterShell = ''
+              export CWD=$(pwd)
+            '';
+            stdenv = pkgs.llvmPackages_19.stdenv;
+            packages = [
+              pkgs.llvmPackages_19.clang-tools
+            ] ++ config.packages.default.buildInputs ++ config.packages.default.nativeBuildInputs;
 
-              enterShell = ''
-                export CMAKE_PREFIX_PATH=${libtorch-bin}:${boost}:${opencv}:$CMAKE_PREFIX_PATH
+            scripts = {
+              format.exec = ''
+                find $CWD/{src,include} -name '*.cpp' -o -name '*.h' | xargs clang-format -i
               '';
-
-              languages.cplusplus.enable = true;
+              lint.exec = ''
+                find $CWD/{src,include} -name '*.cpp' -o -name '*.h' \
+                  | xargs -I{} clang-tidy -p=./compile_commands.json -checks='*' {}
+              '';
             };
+
+            git-hooks.hooks = {
+              clang-format.enable = true;
+              shellcheck.enable = true;
+              nixfmt-rfc-style.enable = true;
+            };
+          };
         };
     };
 }

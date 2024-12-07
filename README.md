@@ -13,7 +13,7 @@ save output images instead.
 The preferred way to build this project is with the Nix package manager, which
 builds in a hermetically sealed and reproducible build environment as well as
 providing critical build dependencies. Nix will automatically manage the build
-and orchestrate CMake and `make`.
+and orchestrate `meson` and `ninja`.
 
 Note that Nix is only supported on macOS and Linux. Windows users should use
 first install the [Windows Subsystem for Linux
@@ -50,23 +50,19 @@ nix run
 ## Hacking
 
 To hack on the code, it is not convenient to re-run `nix build` upon every code
-change. A [devenv](https://devenv.sh/) development shell is provided so you
-can directly execute `cmake .` and take advantage of CMake's caching features
-and tooling.
+change. A [devenv](https://devenv.sh/) development shell is provided so you can
+directly execute `meson`, `ninja`, and take advantage of incremental
+compilation.
 
 Follow the instructions to install `nix` as detailed above, then run
 
 ```bash
-nix develop
+nix develop --impure
 ```
 
-You will enter a `bash` shell where you can execute `cmake`. All build
-dependencies (such as boost, openCV, etc) are provided in this shell.
-
-You can run `cmake .` followed by `make` to compile the project.
-
-Alternatively, if you want to retain your current shell environment, you can
-install [direnv](https://direnv.net/), then run
+Alternatively, if you want to retain your current shell environment and
+seamlessly layer the development environment over it, you can install
+[direnv](https://direnv.net/), then run
 
 ```bash
 direnv allow
@@ -75,11 +71,33 @@ direnv allow
 Now, your shell will automatically be hooked into the development environment
 as soon as you enter the project root.
 
-The development shell also provides the `clang` and `clangd` LSP binaries for
-convenience.
+The development shell provides various pieces of tooling like `meson`, `ninja`,
+`pkg-config`, etc. It also provides the libraries and dependencies necessary to
+build the project.
 
+Once you are in the development environment, run
 
-## Solution without package managers, only Cmakelist
+```bash
+meson setup build
+```
+
+This will use `meson` to generate the `build/` directory containing build
+orchestration files. If you are using a language service like `clangd`, this
+also provides the `compile_commmands.json` required for it to work properly.
+
+Enter the directory and execute `ninja`:
+
+```bash
+cd build
+ninja
+```
+
+This will produce the `WebSocketWithOpenCV` binary.
+
+## Solution without package managers, only Meson
+
+This approach is not recommended and should only be used if Nix is strictly not
+available for whatever reason.
 
 Before setting up this project, ensure that the following libraries and tools
 are installed on your system:
@@ -91,38 +109,29 @@ are installed on your system:
 - **Boost** (including Boost.Asio and Boost.Beast)
 - **OpenCV** (version 4.0 or higher)
 - **libtorch** (v2.5.0 or higher)
-
-Quick solution to install all of them in your libs folder in this project repo: 
-(1) chmod +x install_dependencies.sh
-(2) ./install_dependencies.sh
-
-- **A C++ Compiler** (supporting C++17 or higher)
-- **CMake** (version 3.10 or higher)
+- **liboai** (v0.4.1 or higher)
+- **A C++ Compiler** (supporting C++17 or higher, preferably clang)
+- **CMake** (version 3.10 or higher, required to find dependencies)
+- **Ninja**
+- **Meson**
 - **nlohmann-json** (version 3.11.3 or higher)
-- **curl 7.78.0** (version 3.10 or higher)
+- **libcurl 7.78.0** (version 3.10 or higher)
 
 Using this approach, you will have to manually provide the dependencies above,
-placing them somewhere that `CMake` can find them.
+placing them somewhere that `pkg-config` or `CMake` or `Meson` can find them.
 
 1. **Clone the Repository**
    ```bash
    git clone <repository-url>
    cd WebSocketWithOpenCV
 
-2. **Install dependencies**
-*If you already have dependencies on your computer*
-I still recommend you to have a libs folder that includes the cloned version of all the required dependencies(Both headers and the compiled code). 
-It is then set up in the CmakeList to then find it relative to your project directory. If you don't then it still works, I'll made it so cmake accounts 
-for that! 
-
-*If you want to install all separate from any other projects, just in this project folder*
-Simply run install_dependencies.sh by doing:
-
-(1) chmod +x install_dependencies.sh
-(2) ./install_dependencies.sh
-
-Debugging statements are there to help you. 
+2. **Install dependencies** *If you already have dependencies on your computer*
+   I still recommend you to have a libs folder that includes the cloned version
+   of all the required dependencies(Both headers and the compiled code). It is
+   then set up in the CmakeList to then find it relative to your project
+   directory. If you don't then it still works, I'll made it so cmake accounts
+   for that! 
 
 3. **Build and server**
-(1) chmod +x build.sh
-(2) do ./build.sh
+(1) `meson setup build && cd build`
+(2) `ninja`

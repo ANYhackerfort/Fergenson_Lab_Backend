@@ -1,4 +1,4 @@
-name: Test build
+name: Lint, check formatting, test build
 
 on:
   push:
@@ -24,5 +24,10 @@ jobs:
         with:
           use-flakehub: false
 
+      - name: Test formatting
+        run: |
+          nix develop --impure --accept-flake-config -c meson setup build
+          nix develop --impure --accept-flake-config -c devenv test
+
       - name: Build default package
-        run: nix build
+        run: nix build --accept-flake-config

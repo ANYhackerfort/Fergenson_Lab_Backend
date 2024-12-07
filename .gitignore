@@ -13,8 +13,10 @@ CMakeFiles
 CMakeCache.txt
 cmake_install.cmake
 WebSocketWithOpenCV
+compile_commands.json
+.cache
+.pre-commit-config.yaml
 libs/
-./libs/
 
 #vscode
 .vscode

@@ -1,28 +1,34 @@
 {
-  stdenv,
   cmake,
   libtorch-bin,
   boost,
   opencv,
+  liboai,
+  meson,
+  ninja,
+  pkg-config,
+  llvmPackages_19,
   lib,
 }:
-stdenv.mkDerivation (finalAttrs: {
-  pname = "lab-backend";
+llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
+  pname = "WebSocketWithOpenCV";
   version = "0.1.0";
 
   src = ../.;
 
   nativeBuildInputs = [
+    meson
+    ninja
     cmake
+    pkg-config
+  ];
+
+  buildInputs = [
     boost
     opencv
     libtorch-bin
+    liboai
   ];
-
-  buildPhase = ''
-    cmake --build .
-    make
-  '';
 
   installPhase = ''
     mkdir -p $out/bin
