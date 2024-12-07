@@ -78,13 +78,16 @@ build the project.
 Once you are in the development environment, run
 
 ```bash
-devenv up
+meson setup build
 ```
 
 This will use `meson` to generate the `build/` directory containing build
-orchestration files. Enter the directory and execute `ninja`:
+orchestration files. If you are using a language service like `clangd`, this
+also provides the `compile_commmands.json` required for it to work properly.
 
-```
+Enter the directory and execute `ninja`:
+
+```bash
 cd build
 ninja
 ```
@@ -106,13 +109,9 @@ are installed on your system:
 - **Boost** (including Boost.Asio and Boost.Beast)
 - **OpenCV** (version 4.0 or higher)
 - **libtorch** (v2.5.0 or higher)
-
-Quick solution to install all of them in your libs folder in this project repo: 
-(1) chmod +x install_dependencies.sh
-(2) ./install_dependencies.sh
-
-- **A C++ Compiler** (supporting C++17 or higher)
-- **CMake** (version 3.10 or higher)
+- **liboai** (v0.4.1 or higher)
+- **A C++ Compiler** (supporting C++17 or higher, preferably clang)
+- **CMake** (version 3.10 or higher, required to find dependencies)
 - **Ninja**
 - **Meson**
 - **nlohmann-json** (version 3.11.3 or higher)
@@ -126,11 +125,12 @@ placing them somewhere that `pkg-config` or `CMake` or `Meson` can find them.
    git clone <repository-url>
    cd WebSocketWithOpenCV
 
-2. **Install dependencies**
-*If you already have dependencies on your computer*
-I still recommend you to have a libs folder that includes the cloned version of all the required dependencies(Both headers and the compiled code). 
-It is then set up in the CmakeList to then find it relative to your project directory. If you don't then it still works, I'll made it so cmake accounts 
-for that! 
+2. **Install dependencies** *If you already have dependencies on your computer*
+   I still recommend you to have a libs folder that includes the cloned version
+   of all the required dependencies(Both headers and the compiled code). It is
+   then set up in the CmakeList to then find it relative to your project
+   directory. If you don't then it still works, I'll made it so cmake accounts
+   for that! 
 
 3. **Build and server**
 (1) `meson setup build && cd build`
