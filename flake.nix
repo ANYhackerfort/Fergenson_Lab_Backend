@@ -39,9 +39,14 @@
               export CWD=$(pwd)
             '';
             stdenv = pkgs.llvmPackages_19.stdenv;
-            packages = [
-              pkgs.llvmPackages_19.clang-tools
-            ] ++ config.packages.default.buildInputs ++ config.packages.default.nativeBuildInputs;
+            packages =
+              with pkgs;
+              [
+                llvmPackages_19.clang-tools
+                mesonlsp
+              ]
+              ++ config.packages.default.buildInputs
+              ++ config.packages.default.nativeBuildInputs;
 
             scripts = {
               format.exec = ''
