@@ -1,34 +1,50 @@
-#ifdef _WIN32
-#define _WIN32_WINNT 0x0A00
-#endif
-
 #include "process_image.h"
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <cstdlib>
+#include <grpcpp/grpcpp.h>
 #include <iostream>
-#include <liboai.h>
 #include <opencv2/opencv.hpp>
 #include <sstream>
 #include <string>
+#include "message.grpc.pb.h"
 
 // Namespace declarations
 namespace asio = boost::asio;
 using tcp = boost::asio::ip::tcp;
 namespace websocket = boost::beast::websocket;
 
-// Function to test PyTorch integration
-// void testPyTorch() {
-//    // Create a 3x3 random tensor
-//    torch::Tensor tensor = torch::rand({3, 3});
-//    std::cout << "Testing PyTorch Installation:" << std::endl;
-//    std::cout << "Random Tensor:\n" << tensor << std::endl;
-//
-//    // Perform a simple operation
-//    tensor = tensor * 2;
-//    std::cout << "Tensor after multiplication:\n" << tensor << std::endl;
-//}
+// gRPC Service Implementation
+class MessageServiceImpl final : public MessageService::Service {
+public:
+  grpc::Status SendMessage(grpc::ServerContext *context,
+                           const MessageRequest *request,
+                           MessageResponse *reply) override {
+    std::string receivedMessage = request->message();
+    std::cout << "gRPC received message: " << receivedMessage << std::endl;
 
+    // Respond to the gRPC client
+    reply->set_response("Server received: " + receivedMessage);
+    return grpc::Status::OK;
+  }
+};
+
+// Function to run the gRPC server
+void RunGrpcServer() {
+  std::string serverAddress("0.0.0.0:50051");
+  MessageServiceImpl service;
+
+  grpc::ServerBuilder builder;
+  builder.AddListeningPort(serverAddress, grpc::InsecureServerCredentials());
+  builder.RegisterService(&service);
+
+  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+  std::cout << "gRPC server listening on " << serverAddress << std::endl;
+
+  server->Wait();
+}
+
+// WebSocket session function
 void do_session(tcp::socket socket) {
   try {
     websocket::stream<tcp::socket> ws(std::move(socket));
@@ -46,7 +62,8 @@ void do_session(tcp::socket socket) {
           boost::beast::buffers_to_string(buffer.data());
 
       // Log the received message
-      std::cout << "Message from client: " << receivedMessage << std::endl;
+      std::cout << "WebSocket received message: " << receivedMessage
+                << std::endl;
 
       // Respond to the client
       std::string response = "Server received: " + receivedMessage;
@@ -54,73 +71,29 @@ void do_session(tcp::socket socket) {
     }
   } catch (const std::exception &e) {
     // General exception handling
-    std::cout << "Error: " << e.what() << std::endl;
-  }
-}
-
-void reply(tcp::socket socket) {
-  try {
-    websocket::stream<tcp::socket> ws(std::move(socket));
-    ws.accept(); // Accept the WebSocket handshake
-    liboai::OpenAI open_ai;
-    liboai::Conversation chat_box;
-
-    chat_box.SetSystemData("You are a professional physics chatbox");
-
-    boost::beast::multi_buffer buffer;
-    if (open_ai.auth.SetKeyEnv("OPENAI")) {
-      std::cout << "Did this even work" << '\n';
-      try {
-        while (true) {
-          ws.read(buffer); // Blocking read
-          std::string chat_message =
-              boost::beast::buffers_to_string(buffer.data());
-          std::cout << "Received message: " << chat_message << '\n';
-
-          chat_box.AddUserData(chat_message);
-
-          liboai::Response response =
-              open_ai.ChatCompletion->create("gpt-4o-mini", chat_box);
-
-          chat_box.Update(response);
-
-          // Send a confirmation message
-          ws.write(asio::buffer(chat_box.GetLastResponse()));
-          std::cout << "Confirmation sent to client\n";
-
-          buffer.consume(
-              buffer.size()); // Clear the buffer for the next message
-        }
-      } catch (std::exception &e) {
-        std::cout << e.what() << '\n';
-      }
-    }
-  } catch (const std::exception &e) {
-    std::cout << e.what() << '\n';
+    std::cout << "WebSocket Error: " << e.what() << std::endl;
   }
 }
 
 int main() {
   try {
+    // Start gRPC server in a separate thread
+    std::thread grpcThread(RunGrpcServer);
+
+    // Start WebSocket server
     asio::io_context ioc;
     tcp::acceptor acceptor(ioc, tcp::endpoint(tcp::v4(), 8080));
 
     std::cout << "WebSocket server listening on port 8080..." << std::endl;
-    const char *openai_key = std::getenv("OPENAI");
-    if (openai_key) {
-      std::cout << "OpenAI Key: " << openai_key << std::endl;
-    } else {
-      std::cerr << "Error: OPENAI environment variable is not set."
-                << std::endl;
-      return 1; // Exit or handle error appropriately
-    }
 
     while (true) {
       tcp::socket socket(ioc);
       acceptor.accept(socket); // Wait for a client to connect
 
-      std::thread(&reply, std::move(socket)).detach();
+      std::thread(&do_session, std::move(socket)).detach();
     }
+
+    grpcThread.join(); // Ensure the gRPC thread runs indefinitely
   } catch (const std::exception &e) {
     std::cout << "Server Error: " << e.what() << std::endl;
   }
