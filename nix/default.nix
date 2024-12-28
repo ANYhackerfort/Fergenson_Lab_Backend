@@ -9,6 +9,7 @@
   pkg-config,
   llvmPackages_19,
   grpc,
+  protobuf,
   lib,
 }:
 llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
@@ -30,6 +31,7 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     libtorch-bin
     liboai
     grpc
+    protobuf
   ];
 
   installPhase = ''

@@ -20,6 +20,7 @@ liboai_dep = dependency('oai', method: 'auto', required: true)
 libcurl_dep = dependency('libcurl', method: 'auto', required: true)
 nlohmann_dep = dependency('nlohmann_json', method: 'auto', required: true)
 grpc_dep = dependency('grpc', method: 'auto', required: true)
+protobuf_dep = dependency('protobuf', method: 'auto', required: true)
 
 # Add source files
 sources = [
@@ -40,5 +41,6 @@ executable(
     libcurl_dep,
     nlohmann_dep,
     grpc_dep,
+    protobuf_dep,
   ],
 )
