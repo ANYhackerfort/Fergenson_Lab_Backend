@@ -19,6 +19,7 @@ liboai_dep = dependency('oai', method: 'auto', required: true)
 
 libcurl_dep = dependency('libcurl', method: 'auto', required: true)
 nlohmann_dep = dependency('nlohmann_json', method: 'auto', required: true)
+grpc_dep = dependency('grpc', method: 'auto', required: true)
 
 # Add source files
 sources = [
@@ -31,5 +32,13 @@ executable(
   'WebSocketWithOpenCV',
   sources,
   include_directories: inc_dirs,
-  dependencies: [boost_dep, opencv_dep, torch_dep, liboai_dep, libcurl_dep, nlohmann_dep],
+  dependencies: [
+    boost_dep,
+    opencv_dep,
+    torch_dep,
+    liboai_dep,
+    libcurl_dep,
+    nlohmann_dep,
+    grpc_dep,
+  ],
 )

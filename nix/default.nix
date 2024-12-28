@@ -8,6 +8,7 @@
   ninja,
   pkg-config,
   llvmPackages_19,
+  grpc,
   lib,
 }:
 llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
@@ -28,6 +29,7 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     opencv
     libtorch-bin
     liboai
+    grpc
   ];
 
   installPhase = ''
