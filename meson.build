@@ -2,7 +2,7 @@ project(
   'WebSocketWithOpenCV',
   'cpp',
   version: '0.1',
-  default_options: ['cpp_std=c++17'],
+  default_options: ['cpp_std=c++17', 'b_pie=true'],
 )
 
 # Include directories
@@ -17,7 +17,7 @@ endif
 boost_dep = dependency('boost', method: 'auto', required: true)
 torch_dep = dependency('Torch', method: 'auto', required: true)
 nlohmann_dep = dependency('nlohmann_json', method: 'auto', required: true)
-grpc_dep = dependency('grpc', method: 'auto', required: true)
+grpc_dep = dependency('grpc++', method: 'auto', required: true)
 protobuf_dep = dependency('protobuf', method: 'auto', required: true)
 
 # Add source files
