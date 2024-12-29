@@ -16,7 +16,6 @@ endif
 
 boost_dep = dependency('boost', method: 'auto', required: true)
 torch_dep = dependency('Torch', method: 'auto', required: true)
-nlohmann_dep = dependency('nlohmann_json', method: 'auto', required: true)
 grpc_dep = dependency('grpc++', method: 'auto', required: true)
 protobuf_dep = dependency('protobuf', method: 'auto', required: true)
 
@@ -44,7 +43,6 @@ executable(
     boost_dep,
     opencv_dep,
     torch_dep,
-    nlohmann_dep,
     grpc_dep,
     protobuf_dep,
   ],

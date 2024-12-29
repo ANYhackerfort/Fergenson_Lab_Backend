@@ -3,7 +3,6 @@
   libtorch-bin,
   boost,
   opencv,
-  liboai,
   meson,
   ninja,
   pkg-config,
@@ -32,7 +31,6 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     boost
     opencv
     libtorch-bin
-    liboai
     grpc
     protobuf
   ];

@@ -27,8 +27,7 @@
         }:
         {
           packages = {
-            default = pkgs.callPackage ./nix { liboai = config.packages.liboai; };
-            liboai = pkgs.callPackage ./nix/liboai.nix { };
+            default = pkgs.callPackage ./nix { };
           };
           formatter = pkgs.nixfmt-rfc-style;
 
