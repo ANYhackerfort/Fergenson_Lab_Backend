@@ -23,8 +23,8 @@ the below instructions.
 1. Install Nix:
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf -L \
-  https://install.determinate.systems/nix | sh -s -- install --determinate
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | \
+  sh -s -- install
 ```
 
 > [!IMPORTANT]
