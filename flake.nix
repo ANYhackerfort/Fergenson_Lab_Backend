@@ -29,9 +29,6 @@
           config,
           ...
         }:
-        let
-          clang-tools = pkgs.llvmPackages_19.clang-tools;
-        in
         {
           packages = {
             default = pkgs.callPackage ./nix { };
@@ -40,42 +37,7 @@
 
           # the development environment for this project
           # provides `cmake`, `clang`, `clangd`, and all required dependencies (boost, opencv, libtorch)
-          devenv.shells.default = {
-            enterShell = ''
-              export CWD=$(pwd)
-            '';
-            stdenv = pkgs.llvmPackages_19.stdenv;
-            packages =
-              [
-                pkgs.mesonlsp
-                clang-tools
-              ]
-              ++ config.packages.default.buildInputs
-              ++ config.packages.default.nativeBuildInputs;
-
-            scripts = {
-              format.exec = ''
-                find $CWD/{src,include} -name '*.cpp' -o -name '*.h' | xargs clang-format -i
-              '';
-              lint.exec = ''
-                find $CWD/{src,include} -name '*.cpp' -o -name '*.h' \
-                  | xargs -I{} clang-tidy -p=./compile_commands.json -checks='*' {}
-              '';
-            };
-
-            git-hooks.hooks = {
-              shellcheck.enable = true;
-              treefmt.enable = true;
-              treefmt.settings.formatters = [
-                pkgs.nixfmt-rfc-style
-                clang-tools
-                pkgs.taplo
-                pkgs.meson
-                pkgs.nodePackages_latest.prettier
-              ];
-            };
-
-          };
+          devenv.shells.default = import ./devenv.nix { inherit pkgs config; };
         };
     };
 
