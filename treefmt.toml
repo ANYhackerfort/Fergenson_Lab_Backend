@@ -21,19 +21,6 @@ excludes = []
 includes = ["*.c", "*.cc", "*.cpp", "*.h", "*.hh", "*.hpp", "*.proto"]
 options = ["-i"]
 
-[formatter.meson]
-command = "meson"
-excludes = []
-includes = [
-  "meson.build",
-  "meson.options",
-  "meson_options.txt",
-  "*/meson.build",
-  "*/meson.options",
-  "*/meson_options.txt",
-]
-options = ["fmt", "-i"]
-
 [formatter.taplo]
 command = "taplo"
 excludes = []
