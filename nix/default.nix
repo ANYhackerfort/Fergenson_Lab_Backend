@@ -36,8 +36,7 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
   ];
 
   installPhase = ''
-    mkdir -p $out/bin
-    cp WebSocketWithOpenCV $out/bin
+    install -Dm755 WebSocketWithOpenCV $out/bin/WebSocketWithOpenCV
   '';
 
   meta = {
