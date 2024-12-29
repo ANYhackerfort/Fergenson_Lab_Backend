@@ -23,4 +23,6 @@ in
       pkgs.nodePackages_latest.prettier
     ];
   };
+
+  starship.enable = true;
 }
