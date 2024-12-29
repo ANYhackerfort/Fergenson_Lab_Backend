@@ -54,6 +54,12 @@ change. A [devenv](https://devenv.sh/) development shell is provided so you can
 directly execute `meson`, `ninja`, and take advantage of incremental
 compilation.
 
+> [!IMPORTANT]
+> It is highly recommended that you use the methods described below if you are
+> going to be hacking (developing) on the code. Directly invoking `ninja`
+> vastly speeds up subsequent compile times, since Nix cannot take advantage of
+> incremental compilation.
+
 Follow the instructions to install `nix` as detailed above, then run
 
 ```bash
@@ -94,10 +100,19 @@ ninja
 
 This will produce the `WebSocketWithOpenCV` binary.
 
+> [!IMPORTANT]
+> If you add new libraries to Nix and `meson.build`, it is likely you will have
+> to `rm -rf` the build directory and regenerate it with the commands above,
+> due to some quirks with the Nix environment.
+>
+> Additionally, you should `exit` the `nix develop` shell and re-run `nix
+> develop --impure` if you modify any `nix` files.
+
 ## Solution without package managers, only Meson
 
-This approach is not recommended and should only be used if Nix is strictly not
-available for whatever reason.
+> [!WARNING]
+> This approach is not recommended and should only be used if Nix is strictly not
+> available for whatever reason.
 
 Before setting up this project, ensure that the following libraries and tools
 are installed on your system:
