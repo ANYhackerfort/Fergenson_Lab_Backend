@@ -16,7 +16,6 @@
   enableShared ? !stdenv.hostPlatform.isStatic,
 
   testers,
-  protobuf,
   ...
 }:
 
@@ -92,16 +91,6 @@ stdenv.mkDerivation (finalAttrs: {
   versionCheckProgram = [ "${placeholder "out"}/bin/protoc" ];
   versionCheckProgramArg = [ "--version" ];
   doInstallCheck = true;
-
-  passthru = {
-    tests = {
-      pythonProtobuf = python3.pkgs.protobuf;
-      inherit grpc;
-      version = testers.testVersion { package = protobuf; };
-    };
-
-    inherit abseil-cpp;
-  };
 
   meta = {
     description = "Google's data interchange format";

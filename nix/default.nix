@@ -7,12 +7,12 @@
   ninja,
   pkg-config,
   llvmPackages_19,
-  grpc,
   callPackage,
   lib,
 }:
 let
-  protobuf = callPackage ./protobuf_29_2.nix { };
+  protobuf = callPackage ./protobuf_29_2.nix { inherit grpc; };
+  grpc = callPackage ./grpc.nix { inherit protobuf; };
 in
 llvmPackages_19.stdenv.mkDerivation {
   pname = "WebSocketWithOpenCV";
