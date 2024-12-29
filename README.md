@@ -110,6 +110,21 @@ This will produce the `WebSocketWithOpenCV` binary.
 > Additionally, you should `exit` the `nix develop` shell and re-run `nix
 develop --impure` if you modify any `nix` files.
 
+## Formatter
+
+The `treefmt` autoformatter has been configured in
+[treefmt.toml](./treefmt.toml) to automatically format the entire tree.
+
+To invoke it, please install Nix, then run:
+
+```sh
+nix fmt
+```
+
+We recommend you run this commmand before any commit to ensure your code meets
+quality guidelines. Continuous integration will run on all commits to ensure
+lints and formatting checks pass.
+
 ## Solution without package managers, only Meson
 
 > [!WARNING]
