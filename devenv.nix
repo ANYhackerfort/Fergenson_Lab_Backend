@@ -22,6 +22,9 @@ in
       pkgs.meson
       pkgs.nodePackages_latest.prettier
     ];
+    treefmt.args = [
+      "--excludes \"meson.build\""
+    ];
   };
 
   starship.enable = true;
