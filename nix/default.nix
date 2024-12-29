@@ -14,7 +14,7 @@
 let
   protobuf = callPackage ./protobuf_29_2.nix { };
 in
-llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
+llvmPackages_19.stdenv.mkDerivation {
   pname = "WebSocketWithOpenCV";
   version = "0.1.0";
 
@@ -43,4 +43,4 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     maintainers = [ lib.maintainers.youwen5 ];
     mainProgram = "WebSocketWithOpenCV";
   };
-})
+}
