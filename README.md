@@ -32,11 +32,13 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 > must enable the experimental "flakes" and "nix-command" features.
 
 2. Build the program
-``` bash
+
+```bash
 nix build
 ```
 
 3. Run the program
+
 ```bash
 result/bin/WebSocketWithOpenCV
 ```
@@ -106,7 +108,7 @@ This will produce the `WebSocketWithOpenCV` binary.
 > due to some quirks with the Nix environment.
 >
 > Additionally, you should `exit` the `nix develop` shell and re-run `nix
-> develop --impure` if you modify any `nix` files.
+develop --impure` if you modify any `nix` files.
 
 ## Solution without package managers, only Meson
 
@@ -136,17 +138,20 @@ Using this approach, you will have to manually provide the dependencies above,
 placing them somewhere that `pkg-config` or `CMake` or `Meson` can find them.
 
 1. **Clone the Repository**
+
    ```bash
    git clone <repository-url>
    cd WebSocketWithOpenCV
 
-2. **Install dependencies** *If you already have dependencies on your computer*
+   ```
+
+2. **Install dependencies** _If you already have dependencies on your computer_
    I still recommend you to have a libs folder that includes the cloned version
    of all the required dependencies(Both headers and the compiled code). It is
    then set up in the CmakeList to then find it relative to your project
    directory. If you don't then it still works, I'll made it so cmake accounts
-   for that! 
+   for that!
 
 3. **Build and server**
-(1) `meson setup build && cd build`
-(2) `ninja`
+   (1) `meson setup build && cd build`
+   (2) `ninja`
