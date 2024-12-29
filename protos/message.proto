@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 service MessageService {
-  rpc SendMessage (MessageRequest) returns (MessageResponse);
+  rpc SendMessage(MessageRequest) returns (MessageResponse);
 }
 
 message MessageRequest {

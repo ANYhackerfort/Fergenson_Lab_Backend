@@ -1,3 +1,4 @@
+#include "message.grpc.pb.h"
 #include "process_image.h"
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
@@ -7,7 +8,6 @@
 #include <opencv2/opencv.hpp>
 #include <sstream>
 #include <string>
-#include "message.grpc.pb.h"
 
 // Namespace declarations
 namespace asio = boost::asio;
