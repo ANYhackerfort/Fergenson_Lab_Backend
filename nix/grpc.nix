@@ -19,6 +19,12 @@
   python3,
   arrow-cpp,
 }:
+let
+  dynamic-lookup-darwin-patch = fetchpatch {
+    url = "https://raw.githubusercontent.com/NixOS/nixpkgs/c2525c85faca142c7cc49b4a163334aa92daac11/pkgs/by-name/gr/grpc/dynamic-lookup-darwin.patch";
+    hash = "sha256-JwEXAc6JmKUvIQjaOPLtCjatM/fLqldvccK2kG01kwY=";
+  };
+in
 
 # This package should be updated together with all related python grpc packages
 # to ensure compatibility.
@@ -50,7 +56,7 @@ stdenv.mkDerivation rec {
       hash = "sha256-Lm0GQsz/UjBbXXEE14lT0dcRzVmCKycrlrdBJj+KLu8=";
     })
     # fix build of 1.63.0 and newer on darwin: https://github.com/grpc/grpc/issues/36654
-  ] ++ (lib.optional stdenv.hostPlatform.isDarwin ./dynamic-lookup-darwin.patch);
+  ] ++ (lib.optional stdenv.hostPlatform.isDarwin dynamic-lookup-darwin-patch);
 
   nativeBuildInputs = [
     cmake
