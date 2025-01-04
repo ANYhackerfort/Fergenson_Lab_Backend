@@ -8,11 +8,15 @@
 #include <opencv2/opencv.hpp>
 #include <sstream>
 #include <string>
+#include "message.grpc.pb.h"
+#include "state_of_lab.h"
+#include <nlohmann/json.hpp>
 
 // Namespace declarations
 namespace asio = boost::asio;
 using tcp = boost::asio::ip::tcp;
 namespace websocket = boost::beast::websocket;
+using json = nlohmann::json;
 
 // gRPC Service Implementation
 class MessageServiceImpl final : public MessageService::Service {
@@ -31,58 +35,89 @@ public:
 
 // Function to run the gRPC server
 void RunGrpcServer() {
-  std::string serverAddress("0.0.0.0:50051");
-  MessageServiceImpl service;
+    std::string serverAddress("192.168.2.136:50053");
+    MessageServiceImpl service;
 
-  grpc::ServerBuilder builder;
-  builder.AddListeningPort(serverAddress, grpc::InsecureServerCredentials());
-  builder.RegisterService(&service);
+    grpc::ServerBuilder builder;
+    builder.AddListeningPort(serverAddress, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
 
-  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-  std::cout << "gRPC server listening on " << serverAddress << std::endl;
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    if (server) {
+        std::cout << "gRPC server listening on " << serverAddress << std::endl;
+    } else {
+        std::cerr << "Failed to start gRPC server!" << std::endl;
+        return;
+    }
 
-  server->Wait();
+    server->Wait();
 }
 
 // WebSocket session function
 void do_session(tcp::socket socket) {
   try {
     websocket::stream<tcp::socket> ws(std::move(socket));
-    ws.accept(); // Accept the WebSocket handshake
-
+    ws.accept();
     std::cout << "WebSocket connection established" << std::endl;
 
     for (;;) {
-      // Buffer for incoming messages
       boost::beast::flat_buffer buffer;
 
-      // Read a message from the WebSocket
+      // Read WebSocket message
       ws.read(buffer);
-      std::string receivedMessage =
-          boost::beast::buffers_to_string(buffer.data());
+      std::string receivedMessage = boost::beast::buffers_to_string(buffer.data());
 
-      // Log the received message
-      std::cout << "WebSocket received message: " << receivedMessage
-                << std::endl;
+      std::cout << "WebSocket received message: " << receivedMessage << std::endl;
 
-      // Respond to the client
-      std::string response = "Server received: " + receivedMessage;
-      ws.write(asio::buffer(response));
+      // Parse the received JSON message
+      json request;
+      try {
+        request = json::parse(receivedMessage);
+      } catch (const json::exception &e) {
+        std::string errorResponse = R"({"type":"error","payload":{"message":"Invalid JSON format"}})";
+        ws.write(asio::buffer(errorResponse));
+        continue;
+      }
+
+      // Extract type and payload
+      std::string type = request.value("type", "");
+      json payload = request.value("payload", json::object());
+
+      // Prepare a response JSON
+      json response;
+
+      if (type == "get_component_angle") {
+        // Handle "get_component_angle" request
+        std::string id = payload.value("id", "");
+        double angle = 45.0; // Replace with actual logic to fetch the angle
+
+        response = {
+            {"type", "circular_thermometer_angle"},
+            {"payload", {{"id", id}, {"angle", angle}}}};
+      } else {
+        // Handle unknown request types
+        response = {
+            {"type", "error"},
+            {"payload", {{"message", "Unknown request type"}}}};
+      }
+
+      // Send response back to the client
+      ws.write(asio::buffer(response.dump()));
     }
   } catch (const std::exception &e) {
-    // General exception handling
+    // Handle exceptions gracefully
     std::cout << "WebSocket Error: " << e.what() << std::endl;
   }
 }
 
 int main() {
   try {
-    // Start gRPC server in a separate thread
-    std::thread grpcThread(RunGrpcServer);
+    // Create all labs here
+    auto labs = std::make_shared<StateOfLabs>("frankhertz1");
 
     // Start WebSocket server
     asio::io_context ioc;
-    tcp::acceptor acceptor(ioc, tcp::endpoint(tcp::v4(), 8080));
+    tcp::acceptor acceptor(ioc, tcp::endpoint(asio::ip::address_v4::any(), 8080));
 
     std::cout << "WebSocket server listening on port 8080..." << std::endl;
 
@@ -90,11 +125,11 @@ int main() {
       tcp::socket socket(ioc);
       acceptor.accept(socket); // Wait for a client to connect
 
-      std::thread(&do_session, std::move(socket)).detach();
+      // Pass the socket and shared labs instance to the session thread
+      std::thread(&do_session, std::move(socket), labs).detach();
     }
-
-    grpcThread.join(); // Ensure the gRPC thread runs indefinitely
-  } catch (const std::exception &e) {
+  } catch (const std::exception& e) {
     std::cout << "Server Error: " << e.what() << std::endl;
   }
 }
+
