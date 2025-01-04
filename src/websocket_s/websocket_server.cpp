@@ -1,16 +1,15 @@
 #include "message.grpc.pb.h"
-#include "process_image.h"
+#include "openCV_f/process_image.h"
+#include "stateOfLab_s/state_of_lab.h"
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <cstdlib>
 #include <grpcpp/grpcpp.h>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <opencv2/opencv.hpp>
 #include <sstream>
 #include <string>
-#include "message.grpc.pb.h"
-#include "state_of_lab.h"
-#include <nlohmann/json.hpp>
 
 // Namespace declarations
 namespace asio = boost::asio;
@@ -35,22 +34,22 @@ public:
 
 // Function to run the gRPC server
 void RunGrpcServer() {
-    std::string serverAddress("192.168.2.136:50053");
-    MessageServiceImpl service;
+  std::string serverAddress("192.168.2.136:50053");
+  MessageServiceImpl service;
 
-    grpc::ServerBuilder builder;
-    builder.AddListeningPort(serverAddress, grpc::InsecureServerCredentials());
-    builder.RegisterService(&service);
+  grpc::ServerBuilder builder;
+  builder.AddListeningPort(serverAddress, grpc::InsecureServerCredentials());
+  builder.RegisterService(&service);
 
-    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-    if (server) {
-        std::cout << "gRPC server listening on " << serverAddress << std::endl;
-    } else {
-        std::cerr << "Failed to start gRPC server!" << std::endl;
-        return;
-    }
+  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+  if (server) {
+    std::cout << "gRPC server listening on " << serverAddress << std::endl;
+  } else {
+    std::cerr << "Failed to start gRPC server!" << std::endl;
+    return;
+  }
 
-    server->Wait();
+  server->Wait();
 }
 
 // WebSocket session function
@@ -65,16 +64,19 @@ void do_session(tcp::socket socket) {
 
       // Read WebSocket message
       ws.read(buffer);
-      std::string receivedMessage = boost::beast::buffers_to_string(buffer.data());
+      std::string receivedMessage =
+          boost::beast::buffers_to_string(buffer.data());
 
-      std::cout << "WebSocket received message: " << receivedMessage << std::endl;
+      std::cout << "WebSocket received message: " << receivedMessage
+                << std::endl;
 
       // Parse the received JSON message
       json request;
       try {
         request = json::parse(receivedMessage);
       } catch (const json::exception &e) {
-        std::string errorResponse = R"({"type":"error","payload":{"message":"Invalid JSON format"}})";
+        std::string errorResponse =
+            R"({"type":"error","payload":{"message":"Invalid JSON format"}})";
         ws.write(asio::buffer(errorResponse));
         continue;
       }
@@ -91,14 +93,12 @@ void do_session(tcp::socket socket) {
         std::string id = payload.value("id", "");
         double angle = 45.0; // Replace with actual logic to fetch the angle
 
-        response = {
-            {"type", "circular_thermometer_angle"},
-            {"payload", {{"id", id}, {"angle", angle}}}};
+        response = {{"type", "circular_thermometer_angle"},
+                    {"payload", {{"id", id}, {"angle", angle}}}};
       } else {
         // Handle unknown request types
-        response = {
-            {"type", "error"},
-            {"payload", {{"message", "Unknown request type"}}}};
+        response = {{"type", "error"},
+                    {"payload", {{"message", "Unknown request type"}}}};
       }
 
       // Send response back to the client
@@ -117,7 +117,8 @@ int main() {
 
     // Start WebSocket server
     asio::io_context ioc;
-    tcp::acceptor acceptor(ioc, tcp::endpoint(asio::ip::address_v4::any(), 8080));
+    tcp::acceptor acceptor(ioc,
+                           tcp::endpoint(asio::ip::address_v4::any(), 8080));
 
     std::cout << "WebSocket server listening on port 8080..." << std::endl;
 
@@ -128,8 +129,7 @@ int main() {
       // Pass the socket and shared labs instance to the session thread
       std::thread(&do_session, std::move(socket), labs).detach();
     }
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     std::cout << "Server Error: " << e.what() << std::endl;
   }
 }
-

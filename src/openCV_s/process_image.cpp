@@ -1,4 +1,4 @@
-#include "process_image.h"
+#include "openCV_f/process_image.h"
 #include <iostream>
 
 ImageProcessor::ImageProcessor(const std::string &imagePath)
