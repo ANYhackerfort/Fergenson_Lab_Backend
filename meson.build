@@ -6,23 +6,25 @@ project(
 )
 
 # Include directories
-inc_dirs = include_directories('include', 'include/openCV_f', 'protos')
+inc_dirs = include_directories('include', 'protos')
 
 # Dependencies
-opencv_dep = dependency('opencv4', method: 'auto', required: false)
+opencv_dep = dependency('opencv4', required: false)
 if not opencv_dep.found()
-    opencv_dep = dependency('opencv', method: 'auto', required: true)
+    opencv_dep = dependency('opencv')
 endif
 
-boost_dep = dependency('boost', method: 'auto', required: true)
-torch_dep = dependency('Torch', method: 'auto', required: true)
-grpc_dep = dependency('grpc++', method: 'auto', required: true)
-protobuf_dep = dependency('protobuf', method: 'auto', required: true)
+boost_dep = dependency('boost')
+torch_dep = dependency('Torch')
+grpc_dep = dependency('grpc++')
+protobuf_dep = dependency('protobuf')
+nlohmann_dep = dependency('nlohmann_json')
 
 # Add source files
 sources = [
     'src/websocket_s/websocket_server.cpp',
     'src/openCV_s/process_image.cpp',
+    'src/stateOfLab_s/state_of_lab.cpp',
 ]
 
 # Add proto-generated files

@@ -8,6 +8,7 @@
   pkg-config,
   llvmPackages_19,
   callPackage,
+  nlohmann_json,
   lib,
 }:
 let
@@ -25,6 +26,7 @@ llvmPackages_19.stdenv.mkDerivation {
     ninja
     cmake
     pkg-config
+    nlohmann_json
   ];
 
   buildInputs = [
